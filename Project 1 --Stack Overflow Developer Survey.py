@@ -65,12 +65,6 @@ list(df_schema[df_schema['Column'] == 'Country' ]['Question'])[0]
 
 #'CousinEducation' in df_schema
 def get_description(column_name, schema=df_schema):
-    '''
-    INPUT - schema - pandas dataframe with the schema of the developers survey
-            column_name - string - the name of the column you would like to know about
-    OUTPUT - 
-            desc - string - the description of the column
-    '''
     desc = list(schema[schema['Column'] == column_name]['Question'])[0]
     return desc
 
@@ -80,16 +74,6 @@ get_description(df_public.columns[90]) # This should return a string of the firs
 get_description(df_public.columns[86]) 
         
 def total_count(df, col1, col2, look_for):
-    '''
-    INPUT:
-    df - the pandas dataframe you want to search
-    col1 - the column name you want to look through
-    col2 - the column you want to count values from
-    look_for - a list of strings you want to search for in each row of df[col]
-
-    OUTPUT:
-    new_df - a dataframe of each look_for with the count of how often it shows up
-    '''
     new_df = defaultdict(int)
     #loop through list of ed types
     for val in look_for:
@@ -111,17 +95,6 @@ possible_vals = ["Take online courses", "Buy books and work through the exercise
                  "Master's degree", "Participate in hackathons", "Other"]
 
 def clean_and_plot(df, title='Method of Educating Suggested', plot=True):
-    '''
-    INPUT 
-        df - a dataframe holding the CousinEducation column
-        title - string the title of your plot
-        axis - axis object
-        plot - bool providing whether or not you want a plot back
-        
-    OUTPUT
-        study_df - a dataframe with the count of how many individuals
-        Displays a plot of pretty things related to the CousinEducation column.
-    '''
     study = df['CousinEducation'].value_counts().reset_index()
     study.rename(columns={'index': 'method', 'CousinEducation': 'count'}, inplace=True)
     study_df = total_count(study, 'method', 'count', possible_vals)
@@ -137,15 +110,6 @@ def clean_and_plot(df, title='Method of Educating Suggested', plot=True):
 props_df = clean_and_plot(df_public)
 
 def higher_ed(formal_ed_str):
-    '''
-    INPUT
-        formal_ed_str - a string of one of the values from the Formal Education column
-    
-    OUTPUT
-        return 1 if the string is  in ("Master's degree", "Doctoral", "Professional degree")
-        return 0 otherwise
-    
-    '''
     if formal_ed_str in ("Master's degree", "Doctoral degree", "Professional degree"):
         return 1
     else:
@@ -350,20 +314,6 @@ cat_df.columns
 cat_cols_lst = cat_df.columns
 
 def create_dummy_df(df, cat_cols, dummy_na):
-    '''
-    INPUT:
-    df - pandas dataframe with categorical variables you want to dummy
-    cat_cols - list of strings that are associated with names of the categorical columns
-    dummy_na - Bool holding whether you want to dummy NA vals of categorical columns or not
-    
-    OUTPUT:
-    df - a new dataframe that has the following characteristics:
-            1. contains all columns that were not specified as categorical
-            2. removes all the original columns in cat_cols
-            3. dummy columns for each of the categorical columns in cat_cols
-            4. if dummy_na is True - it also contains dummy columns for the NaN values
-            5. Use a prefix of the column name with an underscore (_) for separating 
-    '''
     for col in  cat_cols:
         try:
             # for each cat add dummy var, drop original column
@@ -387,33 +337,6 @@ print(df_new.shape)
 
 
 def clean_fit_linear_mod(df, response_col, cat_cols, dummy_na, test_size=.3, rand_state=42):
-    '''
-    INPUT:
-    df - a dataframe holding all the variables of interest
-    response_col - a string holding the name of the column 
-    cat_cols - list of strings that are associated with names of the categorical columns
-    dummy_na - Bool holding whether you want to dummy NA vals of categorical columns or not
-    test_size - a float between [0,1] about what proportion of data should be in the test dataset
-    rand_state - an int that is provided as the random state for splitting the data into training and test 
-    
-    OUTPUT:
-    test_score - float - r2 score on the test data
-    train_score - float - r2 score on the test data
-    lm_model - model object from sklearn
-    X_train, X_test, y_train, y_test - output from sklearn train test split used for optimal model
-    
-    Your function should:
-    1. Drop the rows with missing response values
-    2. Drop columns with NaN for all the values
-    3. Use create_dummy_df to dummy categorical columns
-    4. Fill the mean of the column for any missing values 
-    5. Split your data into an X matrix and a response vector y
-    6. Create training and test sets of data
-    7. Instantiate a LinearRegression model with normalized data
-    8. Fit your model to the training data
-    9. Predict the response for the training data and the test data
-    10. Obtain an rsquared value for both the training and test data
-    '''
     #Drop the rows with missing response values
     df  = df.dropna(subset=[response_col], axis=0)
 
@@ -457,53 +380,8 @@ test_score, train_score, lm_model, X_train, X_test, y_train, y_test = clean_fit_
 print("The rsquared on the training data was {}.  The rsquared on the test data was {}.".format(train_score, test_score))
 
 
-# In[ ]:
-
-
-a = 'test_score'
-b = 'train_score'
-c = 'linear model (lm_model)'
-d = 'X_train and y_train'
-e = 'X_test'
-f = 'y_test'
-g = 'train and test data sets'
-h = 'overfitting'
-
-q1_piat = '''In order to understand how well our {} fit the dataset, 
-            we first needed to split our data into {}.  
-            Then we were able to fit our {} on the {}.  
-            We could then predict using our {}  by providing 
-            the linear model the {} for it to make predictions.  
-            These predictions were for {}. 
-
-            By looking at the {}, it looked like we were doing awesome because 
-            it was 1!  However, looking at the {} suggested our model was not 
-            extending well.  The purpose of this notebook will be to see how 
-            well we can get our model to extend to new data.
-            
-            This problem where our data fits the training data well, but does
-            not perform well on test data is commonly known as 
-            {}.'''.format(c, g, c, d, c, e, f, b, a, h)
-
-print(q1_piat)
-
-
 def find_optimal_lm_mod(X, y, cutoffs, test_size = .30, random_state=42, plot=True):
-    '''
-    INPUT
-    X - pandas dataframe, X matrix
-    y - pandas dataframe, response variable
-    cutoffs - list of ints, cutoff for number of non-zero values in dummy categorical vars
-    test_size - float between 0 and 1, default 0.3, determines the proportion of data as test data
-    random_state - int, default 42, controls random state for train_test_split
-    plot - boolean, default 0.3, True to plot result
-
-    OUTPUT
-    r2_scores_test - list of floats of r2 scores on the test data
-    r2_scores_train - list of floats of r2 scores on the train data
-    lm_model - model object from sklearn
-    X_train, X_test, y_train, y_test - output from sklearn train test split used for optimal model
-    '''
+ 
     r2_scores_test, r2_scores_train, num_feats, results = [], [], [], dict()
     for cutoff in cutoffs:
 
@@ -550,22 +428,6 @@ def find_optimal_lm_mod(X, y, cutoffs, test_size = .30, random_state=42, plot=Tr
     return r2_scores_test, r2_scores_train, lm_model, X_train, X_test, y_train, y_test
 
 def clean_data(df):
-    '''
-    INPUT
-    df - pandas dataframe 
-    
-    OUTPUT
-    X - A matrix holding all of the variables you want to consider when predicting the response
-    y - the corresponding response vector
-    
-    This function cleans df using the following steps to produce X and y:
-    1. Drop all the rows with no salaries
-    2. Create X as all the columns that are not the Salary column
-    3. Create y as the Salary column
-    4. Drop the Salary, Respondent, and the ExpectedSalary columns from X
-    5. For each numeric variable in X, fill the column with the mean value of the column.
-    6. Create dummy columns for all the categorical variables in X, drop the original columns
-    '''
     # Drop rows with missing salary values
     df = df.dropna(subset=['Salary'], axis=0)
     y = df['Salary']
@@ -602,17 +464,6 @@ print(r2_scores_train[np.argmax(r2_scores_test)]) # The model we should implemen
 
 
 def coef_weights(coefficients, X_train):
-    '''
-    INPUT:
-    coefficients - the coefficients of the linear model 
-    X_train - the training data, so the column names can be used
-    OUTPUT:
-    coefs_df - a dataframe holding the coefficient, estimate, and abs(estimate)
-    
-    Provides a dataframe that can be used to understand the most influential coefficients
-    in a linear model by providing the coefficient estimates along with the name of the 
-    variable attached to the coefficient.
-    '''
     coefs_df = pd.DataFrame()
     coefs_df['est_int'] = X_train.columns
     coefs_df['coefs'] = lm_model.coef_
