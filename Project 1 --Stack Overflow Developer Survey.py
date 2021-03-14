@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[2]:
-
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -15,14 +9,8 @@ from sklearn.metrics import r2_score, mean_squared_error
 get_ipython().run_line_magic('matplotlib', 'inline')
 
 
-# In[3]:
-
-
 df_schema = pd.read_csv('survey_results_schema.csv')
 df_schema.head()
-
-
-# In[4]:
 
 
 df_schema.shape#(154,2)
@@ -38,14 +26,8 @@ df_schema.loc[[2]]
 #dat.iloc[row, column]
 
 
-# In[5]:
-
-
 df_public = pd.read_csv('survey_results_public.csv')
 df_public.head()
-
-
-# In[62]:
 
 
 df_public.isnull()
@@ -66,38 +48,20 @@ status_vals = df_public['Professional'].value_counts()
 plt.title("what kind of developer are you?");
 
 
-# In[6]:
-
-
 hobby_vals = df_public["ProgramHobby"].value_counts()
 (hobby_vals/df_public.shape[0]).plot(kind="bar");
 plt.title("Program hobbies")
-
-
-# In[7]:
 
 
 country_vals = df_public["Country"].value_counts()
 (country_vals[:10]/df_public.shape[0]).plot(kind="bar");
 plt.title("Top 10 Country")
 
-
-# In[8]:
-
-
 ed_vals = df_public['FormalEducation'].value_counts()
 (ed_vals/df_public.shape[0]).plot(kind="bar");
 plt.title("FormalEducation")
 
-
-# In[9]:
-
-
 list(df_schema[df_schema['Column'] == 'Country' ]['Question'])[0]
-
-
-# In[13]:
-
 
 #'CousinEducation' in df_schema
 def get_description(column_name, schema=df_schema):
@@ -115,11 +79,6 @@ def get_description(column_name, schema=df_schema):
 get_description(df_public.columns[90]) # This should return a string of the first column description
 get_description(df_public.columns[86]) 
         
-
-
-# In[15]:
-
-
 def total_count(df, col1, col2, look_for):
     '''
     INPUT:
@@ -143,10 +102,6 @@ def total_count(df, col1, col2, look_for):
     new_df.columns = [col1, col2]
     new_df.sort_values('count', ascending=False, inplace=True)
     return new_df
-
-
-# In[16]:
-
 
 get_description('ProgramHobby')#'Do you program as a hobby or contribute to open source projects?'
 possible_vals = ["Take online courses", "Buy books and work through the exercises", 
@@ -181,10 +136,6 @@ def clean_and_plot(df, title='Method of Educating Suggested', plot=True):
     
 props_df = clean_and_plot(df_public)
 
-
-# In[17]:
-
-
 def higher_ed(formal_ed_str):
     '''
     INPUT
@@ -205,16 +156,10 @@ df_public['HigherEd'] = df_public["FormalEducation"].apply(higher_ed) #Test your
 df_public['HigherEd'].mean()
 
 
-# In[18]:
-
-
 ed_1 = df_public[df_public['HigherEd'] == 1]
 ed_0 = df_public[df_public['HigherEd'] == 0]
 print(ed_1['HigherEd'][:5]) #Assure it looks like what you would expect
 print(ed_0['HigherEd'][:5]) #Assure it looks like what you would expect
-
-
-# In[223]:
 
 
 ed_1_perc = clean_and_plot(ed_1, 'Higher Formal Education', plot=False)
@@ -225,9 +170,6 @@ comp_df['Diff_HigherEd_Vals'] = comp_df['ed_1_perc'] - comp_df['ed_0_perc']
 comp_df.style.bar(subset=['Diff_HigherEd_Vals'], align='mid', color=['#d65f5f', '#5fba7d'])
 
 
-# In[19]:
-
-
 bootcamp_df = df_public[df_public['TimeAfterBootcamp'].isnull()==False] #2602 rows × 155 columns
 not_bootcamp_df = df_public[df_public['TimeAfterBootcamp'].isnull()==True] #48790 rows × 155 columns
 bootcamp_df.shape #(2602, 155 )
@@ -235,93 +177,33 @@ bootcamp_df['Gender'].value_counts()/(bootcamp_df.shape[0]-sum(bootcamp_df['Gend
 #sum(bootcamp_df['Gender'].isnull()) #433
 #np.sum(bootcamp_df['Gender'].isnull()) #433
 
-
-# In[20]:
-
-
 not_bootcamp_df['Gender'].value_counts()/(not_bootcamp_df.shape[0]-sum(not_bootcamp_df['Gender'].isnull()))
-
-
-# In[21]:
-
 
 bootcamp_df['FormalEducation'].value_counts()/(bootcamp_df.shape[0]-sum(bootcamp_df['FormalEducation'].isnull()))
 
-
-# In[22]:
-
-
 not_bootcamp_df['FormalEducation'].value_counts()/(not_bootcamp_df.shape[0]-sum(not_bootcamp_df['FormalEducation'].isnull()))
-
-
-# In[23]:
-
 
 bootcamp_df['TimeAfterBootcamp'].value_counts()/(bootcamp_df.shape[0])
 
-
-# In[24]:
-
-
 bootcamp_df['Salary'].hist(bins=20)
-
-
-# In[25]:
-
 
 df_public['JobSatisfaction'].isnull().mean()
 
-
-# In[26]:
-
-
 df_public.groupby(['EmploymentStatus']).mean()['JobSatisfaction'].sort_values()
-
-
-# In[27]:
-
 
 df_public.groupby(['CompanySize']).mean()['JobSatisfaction'].sort_values()
 
-
-# In[28]:
-
-
 df_public.groupby(['ProgramHobby']).mean()['JobSatisfaction'].sort_values().dropna()
-
-
-# In[29]:
-
 
 df_public.groupby(['HomeRemote']).mean()['JobSatisfaction'].sort_values().dropna()
 
-
-# In[30]:
-
-
 df_public.groupby(['FormalEducation']).mean()['JobSatisfaction'].sort_values().dropna()
-
-
-# In[31]:
-
 
 df_public.describe()
 
-
-# In[273]:
-
-
 df_public.hist;
 
-
-# In[32]:
-
-
 sns.heatmap(df_public.corr(), annot=True, fmt='.2f')
-
-
-# In[33]:
-
 
 X = df_public[['CareerSatisfaction','JobSatisfaction','HoursPerWeek','StackOverflowSatisfaction']]
 y = df_public['Salary']
@@ -334,30 +216,14 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.3, random_s
 lm_model = LinearRegression(normalize=True)
 lm_model
 
-
-# In[34]:
-
-
 X_train.head()
-
-
-# In[35]:
-
 
 #lm_model.fit(X_train, y_train)
 num_vars = df_public[['Salary', 'CareerSatisfaction','JobSatisfaction','HoursPerWeek','StackOverflowSatisfaction']]
 num_vars.head()
 
-
-# In[36]:
-
-
 prop_sals = 1 - num_vars['Salary'].isnull().mean()
 num_vars.dropna(subset=['Salary'], axis=0,how='any')
-
-
-# In[37]:
-
 
 sal_rm = num_vars.dropna(subset=['Salary'], axis=0,how='any') #12891
 X = sal_rm[['CareerSatisfaction','JobSatisfaction','HoursPerWeek','StackOverflowSatisfaction']]
@@ -374,10 +240,6 @@ try:
     lm_model.fit(X_train, y_train)
 except:
     print("Oh no! It doesn't work!!!")
-
-
-# In[38]:
-
 
 all_rm = num_vars.dropna(axis=0)# dataframe with rows for nan Salaries removed
 X_2 = all_rm[['CareerSatisfaction', 'HoursPerWeek', 'JobSatisfaction', 'StackOverflowSatisfaction']]
@@ -397,17 +259,9 @@ y_test_preds = lm_2_model.predict(X_2_test)# Predictions here
 r2_test = r2_score(y_2_test, y_test_preds) # Rsquared here
 r2_score(y_2_test, y_test_preds)
 
-
-# In[39]:
-
-
 print("The number of salaries in the original dataframe is " + str(np.sum(df_public.Salary.notnull()))) 
 print("The number of salaries predicted using our model is " + str(len(y_test_preds)))
 print("This is bad because we only predicted " + str(len(y_test_preds)/np.sum(df_public.Salary.notnull())) + " of the salaries in the dataset.")
-
-
-# In[40]:
-
 
 #Only use quant variables and drop any rows with missing values
 
@@ -425,18 +279,10 @@ lm_model.fit(X_train, y_train) #Fit
 y_test_preds = lm_model.predict(X_test) 
 "The r-squared score for your model was {} on {} values.".format(r2_score(y_test, y_test_preds), len(y_test))
 
-
-# In[41]:
-
-
 drop_sal_df = num_vars.dropna(subset=['Salary'], axis=0) #Drop the rows with missing salaries
 
 # test look
 drop_sal_df.head()
-
-
-# In[42]:
-
 
 fill_mean = lambda col: col.fillna(col.mean()) # Mean function
 
@@ -444,9 +290,6 @@ fill_df = drop_sal_df.apply(fill_mean, axis=0) #Fill all missing values with the
 
 # test look
 fill_df.head()
-
-
-# In[43]:
 
 
 #Split into explanatory and response variables
@@ -467,10 +310,6 @@ rsquared_score = r2_score(y_test, y_test_preds)
 length_y_test = len(y_test)
 
 "The r-squared score for your model was {} on {} values.".format(rsquared_score, length_y_test)
-
-
-# In[45]:
-
 
 #Only use quant variables and drop any rows with missing values
 num_vars = df_public[['Salary', 'CareerSatisfaction', 'HoursPerWeek', 'JobSatisfaction', 'StackOverflowSatisfaction']]
@@ -497,10 +336,6 @@ lm_model.fit(X_train, y_train) #Fit
 y_test_preds = lm_model.predict(X_test) 
 "The r-squared score for the model using only quantitative variables was {} on {} values.".format(r2_score(y_test, y_test_preds), len(y_test))
 
-
-# In[46]:
-
-
 cat_df = df_public.select_dtypes(include=['object']) # Subset to a dataframe only holding the categorical columns
 
 # Print how many categorical columns are in the dataframe - should be 147
@@ -509,15 +344,7 @@ np.sum(np.sum(cat_df.isnull())/cat_df.shape[0] == 0)# no missing value
 np.sum(np.sum(cat_df.isnull())/cat_df.shape[0] > 0.5)# more than half missing value
 np.sum(np.sum(cat_df.isnull())/cat_df.shape[0] > 0.75)# more than 0.75 missing value
 
-
-# In[47]:
-
-
 cat_df.columns
-
-
-# In[48]:
-
 
 #Pull a list of the column names of the categorical variables
 cat_cols_lst = cat_df.columns
@@ -546,9 +373,6 @@ def create_dummy_df(df, cat_cols, dummy_na):
     return df
 
 
-# In[49]:
-
-
 #Dropping where the salary has missing values
 df  = df_public.dropna(subset=['Salary'], axis=0)
 
@@ -560,9 +384,6 @@ df_new = create_dummy_df(df, cat_cols_lst, dummy_na=False) #Use your newly creat
 
 # Show a header of df_new to check
 print(df_new.shape)
-
-
-# In[50]:
 
 
 def clean_fit_linear_mod(df, response_col, cat_cols, dummy_na, test_size=.3, rand_state=42):
@@ -632,9 +453,6 @@ def clean_fit_linear_mod(df, response_col, cat_cols, dummy_na, test_size=.3, ran
 test_score, train_score, lm_model, X_train, X_test, y_train, y_test = clean_fit_linear_mod(df_new, 'Salary', cat_cols_lst, dummy_na=False)
 
 
-# In[51]:
-
-
 #Print training and testing score
 print("The rsquared on the training data was {}.  The rsquared on the test data was {}.".format(train_score, test_score))
 
@@ -668,9 +486,6 @@ q1_piat = '''In order to understand how well our {} fit the dataset,
             {}.'''.format(c, g, c, d, c, e, f, b, a, h)
 
 print(q1_piat)
-
-
-# In[52]:
 
 
 def find_optimal_lm_mod(X, y, cutoffs, test_size = .30, random_state=42, plot=True):
@@ -734,10 +549,6 @@ def find_optimal_lm_mod(X, y, cutoffs, test_size = .30, random_state=42, plot=Tr
 
     return r2_scores_test, r2_scores_train, lm_model, X_train, X_test, y_train, y_test
 
-
-# In[54]:
-
-
 def clean_data(df):
     '''
     INPUT
@@ -780,9 +591,6 @@ def clean_data(df):
 X, y = clean_data(df_public)    
 
 
-# In[55]:
-
-
 #cutoffs here pertains to the number of missing values allowed in the used columns.
 #Therefore, lower values for the cutoff provides more predictors in the model.
 cutoffs = [5000, 3500, 2500, 1000, 100, 50, 30, 25]
@@ -791,9 +599,6 @@ r2_scores_test, r2_scores_train, lm_model, X_train, X_test, y_train, y_test = fi
 print(X_train.shape[1]) #Number of columns
 print(r2_scores_test[np.argmax(r2_scores_test)]) # The model we should implement test_r2
 print(r2_scores_train[np.argmax(r2_scores_test)]) # The model we should implement train_r2
-
-
-# In[56]:
 
 
 def coef_weights(coefficients, X_train):
